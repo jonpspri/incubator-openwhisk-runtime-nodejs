@@ -1,13 +1,44 @@
+import groovy.json.JsonSlurper
 include 'tests'
 
-//  TODO: Can this file be specified as a parameter?
-file('./docker-local.gradle').with() {
-    if (it.exists()) {
-        apply from: it
+/*
+    Quick example of the format of the architectures input:
+
+    {
+        "amd64": null,
+        "ppc64le": {
+            "url": "https://1.2.3.4:2376",
+            "certPath": "/home/myusername/tls/ppc64le"
+        },
+        "s390x": {
+            "url": "https://my-personal-docker.my-domain.com:2376",
+            "certPath": "/home/myusername/tls/s390x"
+        }
+    }
+ */
+
+new JsonSlurper().with { slurper ->
+    def dockerLocalJsonEnv = System.getenv('docker_local_json')
+    def dockerLocalJsonFile = new File(rootProject.projectDir, 'docker-local.json')
+
+    if (dockerLocalJsonEnv) {
+        gradle.ext.architectures = slurper.parseText(dockerLocalJsonEnv)
+    } else if (dockerLocalJsonFile.exists()) {
+        gradle.ext.architectures = slurper.parse(dockerLocalJsonFile)
+    } else {
+        gradle.ext.architectures = [ 'amd64': null ]
     }
 }
 
-if (!gradle.ext.has('architectures')) gradle.ext.architectures = [ default: [:] ]
+gradle.ext.dockerRegistry = System.getenv('DOCKER_REGISTRY') ?: 'docker.io'
+
+gradle.ext.registryCredentials = [
+    name: gradle.ext.dockerRegistry,
+    url: "https://${gradle.ext.dockerRegistry}/v2/" as String,
+    username: System.getenv('DOCKER_USER'),
+    password: System.getenv('DOCKER_PASSWORD'),
+    email: System.getenv('DOCKER_EMAIL') ?: 'dev@openwhisk.apache.org',
+]
 
 gradle.ext.dockerBuildProjects =
 [

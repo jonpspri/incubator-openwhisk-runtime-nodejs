@@ -18,6 +18,7 @@
 buildscript {
     repositories {
         jcenter()
+        mavenLocal()
         maven {
             url  "http://dl.bintray.com/jonpspri/gradle-plugins/"
         }
@@ -27,12 +28,6 @@ buildscript {
         classpath 'org.ajoberstar:grgit:2.1.0'
         classpath 'com.bmuschko:gradle-docker-plugin:3.2.2'
         classpath 'com.xanophis:gradle-fatmanifest-plugin:0.0.5'
-
-        /*
-            Leaving this here to demonstrate how plugin development and
-            patching can be integrated.
-        */
-        //classpath files('../gradle-multidocker-plugin/build/libs/gradle-multidocker-plugin-0.0.5.jar')
     }
 }
 
@@ -161,7 +156,7 @@ configure (individualArchProjects) {
             url = gradle.architectures[name].url
         }
         if (gradle.architectures[name]?.certPath) {
-            certPath = gradle.architectures[name].certPath
+            certPath = rootProject.file(gradle.architectures[name].certPath)
         }
 
         /*
