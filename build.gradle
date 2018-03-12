@@ -188,7 +188,7 @@ configure (individualArchProjects) {
         /*
             Recommended default for inputDir
          */
-        inputDir = file("${project.buildDir}/docker/${project.name}")
+        inputDir = file("${project.projectDir}/build/docker/${project.name}")
 
         /*
             The tags list is out of hand and is doing a bang-up job of making
