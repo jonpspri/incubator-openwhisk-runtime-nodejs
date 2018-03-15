@@ -6,9 +6,6 @@ eclipse {
     }
 }
 
-//ext.dockerImageName = 'action-nodejs-v8'
-//apply from: '../../gradle/docker.gradle'
-
 task copyProxy(type: Copy) {
     from '../nodejsActionBase/app.js'
     into '.'
