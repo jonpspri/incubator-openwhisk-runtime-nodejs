@@ -37,8 +37,8 @@ elif [ ${RUNTIME_VERSION} == "8" ]; then
 fi
 
 if [[ ! -z ${RUNTIME} ]]; then
-TERM=dumb ./gradlew \
-:core:${RUNTIME}:pubManifestList \
+./gradlew --console=plain \
+:core:${RUNTIME}:putManifestList \
 -PdockerImagePrefix=${IMAGE_PREFIX} \
 -PdockerImageTag=${IMAGE_TAG}
 fi

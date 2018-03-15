@@ -39,15 +39,26 @@ docker tag openwhisk/invoker ${IMAGE_PREFIX}/invoker
 #docker pull openwhisk/nodejs6action
 #docker tag openwhisk/nodejs6action ${IMAGE_PREFIX}/nodejs6action
 
-TERM=dumb ./gradlew \
+./gradlew --console=plain \
 :common:scala:install \
 :core:controller:install \
 :core:invoker:install \
 :tests:install
 
+# Nothing sucks more than collisions during a tagged build.
+case "${TRAVIS_TAG%@*}" in
+  6) builds=( :core:nodejs6Action:dockerBuildImage );;
+  8) builds=( :core:nodejs8Action:dockerBuildImage );;
+  *) builds=( :core:nodejs6Action:dockerBuildImage :core:nodejs8Action:dockerBuildImage )
+esac
+
 # Build runtime
+echo "---------------------------------------------------------------------------------------"
+echo " Building ${builds[@]} "
+echo "---------------------------------------------------------------------------------------"
+
 cd $ROOTDIR
-TERM=dumb ./gradlew \
-:core:nodejs6Action:dockerBuildImage \
-:core:nodejs8Action:dockerBuildImage \
--PdockerImagePrefix=${IMAGE_PREFIX}
+./gradlew --console=plain "${builds[@]}" -PdockerImagePrefix=${IMAGE_PREFIX}
+
+echo "---------------------------------------------------------------------------------------"
+
