@@ -52,6 +52,11 @@ case "${TRAVIS_TAG%@*}" in
   *) builds=( :core:nodejs6Action:dockerBuildImage :core:nodejs8Action:dockerBuildImage )
 esac
 
+# For pull requests, force a local-only build
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then
+  export docker_local_json='{"amd64":null}'
+fi
+
 # Build runtime
 echo "---------------------------------------------------------------------------------------"
 echo " Building ${builds[@]} "
