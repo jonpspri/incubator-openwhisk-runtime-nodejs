@@ -1,6 +1,20 @@
 import groovy.json.JsonSlurper
 include 'tests'
 
+/* -- BEGIN: Project-specific configuration -- */
+/* TODO: Make this into a JSON configuration file? */
+rootProject.name = 'runtime-nodejs'
+
+gradle.ext.dockerBuildProjects =
+[
+    /* TODO: default imageName to project folder name in lowercase? */
+    ':core:nodejsActionBase': [ 'dockerImageName': 'nodejsactionbase' ],
+    ':core:nodejs6Action': [ 'dockerImageName': 'nodejs6action' ],
+
+    ':core:nodejs8Action': [ 'dockerImageName': 'action-nodejs-v8' ]
+]
+/* -- END: Project-specific configuration -- */
+
 /*
     Quick example of the format of the architectures input:
 
@@ -40,18 +54,7 @@ gradle.ext.registryCredentials = [
     email: System.getenv('DOCKER_EMAIL') ?: 'dev@openwhisk.apache.org',
 ]
 
-gradle.ext.dockerBuildProjects =
-[
-    ':core:nodejsActionBase': [
-        'dockerImageName': 'nodejsactionbase'
-    ],
-    ':core:nodejs6Action': [
-        'dockerImageName': 'nodejs6action'
-    ],
-    ':core:nodejs8Action': [
-        'dockerImageName': 'action-nodejs-v8'
-    ]
-]
+rootProject.name = 'runtime-nodejs'
 
 gradle.dockerBuildProjects.each() { baseProjectName, extensions ->
     include baseProjectName
@@ -68,8 +71,6 @@ gradle.dockerBuildProjects.each() { baseProjectName, extensions ->
         architectureProject.projectDir = baseProject.projectDir
     }
 }
-
-rootProject.name = 'runtime-nodejs'
 
 gradle.ext.openwhisk = [
         version: '1.0.0-SNAPSHOT'
