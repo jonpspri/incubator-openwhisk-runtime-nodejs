@@ -18,6 +18,8 @@ env | grep JAVA || /bin/true
 ./gradlew \
   :core:nodejs8Action:distDocker \
   :core:nodejs10Action:distDocker \
+  :core:nodejs12Action:distDocker \
+  :core:typescript37Action:distDocker \
   -PdockerRegistry=${OPENWHISK_TARGET_REGISTRY:-docker.io} \
   -PdockerImagePrefix=${OPENWHISK_TARGET_PREFIX:-openwhisk} \
   -PdockerImageTag=latest-$(uname -m)
@@ -27,7 +29,7 @@ def manifest_shell='''
 registry=${OPENWHISK_TARGET_REGISTRY:-docker.io}
 prefix=${OPENWHISK_TARGET_PREFIX:-openwhisk}
 rm -rf ~/.docker/manifests
-for i in action-nodejs-v8 action-nodejs-v10; do
+for i in action-nodejs-v8 action-nodejs-v10 action-nodejs-v12 action-typescript-v3.7; do
   docker manifest create ${registry}/${prefix}/$i:latest \
     ${registry}/${prefix}/$i:latest-x86_64 \
     ${registry}/${prefix}/$i:latest-s390x \
